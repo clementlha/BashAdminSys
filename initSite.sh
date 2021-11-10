@@ -163,3 +163,4 @@ done
 cd ..
 #rm -R /Template/images/
 #cp -f /images/ Template/images/
+firefox ./www/index.html
