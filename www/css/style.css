@@ -1,36 +1,4 @@
-#!/bin/bash
-
-#Parametrage du help
-if [ "$1" == "--help" ];then
-	echo "salut"
-	exit 0
-fi
-
-#Vérification connexion internet
-echo -e "GET https://google.fr" | nc google.fr 80 > /dev/null 2>&1
-if [ $? -ne 0 ];then
-	echo "Vous n'avez pas internet"
-	exit 0
-fi
-
-#Vérification existance dossier images
-if [ -d "images/" ];then
-	#Verification existance d'image dans le dossier
-	cd images/
-	count=`ls -1 *.jpeg *.png 2>/dev/null | wc -l`
-	if [ $count == 0 ];then
-        	echo "Il n'y a aucune images dans le dossier images"
-	fi
-	cd ..
-else
-	echo "Le dossier images n'existe pas"
-fi
-
-
-mkdir www > /dev/null
-cd www
-mkdir css > /dev/null
-echo "body {
+body {
   height: 600px;
   margin: 0;
   display: grid;
@@ -129,37 +97,4 @@ input:nth-of-type(5) {
 }
 input:nth-of-type(5):checked ~ main#carousel {
   --position: 5;
-}" > css/style.css
-
-echo '<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link href="css/style.css" rel="stylesheet">	
-</head>
-<body>
-  <body>
-    <input type="radio" name="position" checked />
-    <input type="radio" name="position" />
-    <input type="radio" name="position" />
-    <input type="radio" name="position" />
-    <input type="radio" name="position" />
-    <main id="carousel">
-     
-      
-      <main>
-  </body>
-</body>
-</html>' > index.html
-
-cd ..
-cd images/
-for ls in *;do
-sed -i "19i\<div class='item'><img src='../images/$ls' alt='$ls' width='300' height='400'></div>\n" ../www/index.html
-done
-cd ..
-#rm -R /Template/images/
-#cp -f /images/ Template/images/
+}
