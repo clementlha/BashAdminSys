@@ -27,11 +27,11 @@ else
 fi
 
 # Génération du site
-if [ "$1" == "build"];then
+if [ "$1" == "build" ];then
   LOG=Etape.log
 
   mkdir www > /dev/null
-  echo -n "le 'date +%d/%m/%Y' à 'date +%H:%M:%S' : Création du dossier \"www\" dans le répertoire courant"
+  echo -n "le 'date +%d/%m/%Y' à 'date +%H:%M:%S' : Création du dossier \"www\" dans le répertoire courant" | tee -a $LOG
   cd www
   mkdir css > /dev/null
   echo "body {
@@ -146,7 +146,7 @@ if [ "$1" == "build"];then
   </head>
   <body>
     <body>
-      <input type="radio" name="position" checked />
+      
       
       
 
@@ -154,16 +154,20 @@ if [ "$1" == "build"];then
       
         
 
-      <main>
+
+      </main>
     </body>
   </body>
   </html>' > index.html
 
   cd ..
   cd images/
+  i=1
   for ls in *;do
-    sed -i "14i\<input type='radio' name='position' />"
-    sed -i "18i\<div class='item'><img src='../images/$ls' alt='$ls' width='300' height='400'></div>\n" ../www/index.html
+    sed -i "14i\<input type='radio' name='position' />" ../www/index.html
+    sed -i "22i\<div class='item'><img src='../images/$ls' alt='$ls' width='300' height='400'></div>" ../www/index.html
+    echo $i
+    let "i+=1"
   done
   cd ..
   #rm -R /Template/images/
