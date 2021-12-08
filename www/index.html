@@ -1,31 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <link href="css/style.css" rel="stylesheet">	
+  <link href="css/style.css" rel="stylesheet">
+
 </head>
+
 <body>
-  <body>
-    <input type="radio" name="position" checked />
-    <input type="radio" name="position" />
-    <input type="radio" name="position" />
-    <input type="radio" name="position" />
-    <input type="radio" name="position" />
-    <main id="carousel">
-     
-<div class='item'><img src='../images/poney.jpeg' alt='poney.jpeg' width='300' height='400'></div>
 
-<div class='item'><img src='../images/corse.png' alt='corse.png' width='300' height='400'></div>
+  <div class="form" id="form">
+    <nav class="navbar" id="nav">
+      <span id="span">Welcome !</span>
+      <form action="">
+        <input type="text" placeholder="Username" name="username">
+        <input type="text" placeholder="Password" name="psw">
+        <button type="submit">Login</button>
+      </form>
+    </nav>
+  </div>
 
-<div class='item'><img src='../images/capybara.jpeg' alt='capybara.jpeg' width='300' height='400'></div>
+  <div class="slider" id="slide" align="center">
 
-<div class='item'><img src='../images/cafe.jpeg' alt='cafe.jpeg' width='300' height='400'></div>
+    <a href="#slide-2">1</a>
+    <a href="#slide-2">2</a>
+    <a href="#slide-3">3</a>
+    <a href="#slide-4">4</a>
+    <a href="#slide-5">5</a>
 
-      
-      <main>
-  </body>
+    <div class="slides">
+      <div id="slide-1">
+        <img src='../images/poney.jpeg' alt='poney.jpeg' width='300' height='400'>
+      </div>
+      <div id="slide-2">
+        <img src='../images/corse.png' alt='corse.png' width='300' height='400'>
+      </div>
+      <div id="slide-3">
+        <img src='../images/capybara.jpeg' alt='capybara.jpeg' width='300' height='400'>
+      </div>
+      <div id="slide-4">
+        <img src='../images/cafe.jpeg' alt='cafe.jpeg' width='300' height='400'>
+      </div>
+      <div id="slide-5">
+        5
+      </div>
+    </div>
+  </div>
+
+  <div class="article" align="center">
+    <h2>Article sur la reproduction des abeilles</h2>
+    <span>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat aut doloribus fuga sit mollitia veniam inventore
+      odio, ab, deleniti nostrum hic. Unde doloribus sapiente id minus nisi quaerat eaque eveniet?
+    </span>
+    <form action="">
+      <button type="submit">Ajout commentaire
+    </form>
+  </div>
+
 </body>
+
 </html>
