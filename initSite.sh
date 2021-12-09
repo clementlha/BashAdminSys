@@ -44,7 +44,7 @@ case $key in
     
     --stats | generate_stats -> Affiche les statistiques du site
     
-    add_image <image> ->Ajoute une image au dossier images/
+    add_image <image> -> Ajoute une image préalablement ajouté au répertoire \"images\" dans la page web
     
     add_articles <Titre de l'article[,]Description de l'article> -> Ajoute un/des article(s) ⚠⚠⚠ Si vous devez mettre une chaine de caractere, vous devez utiliser des guillemets \"\" 
     
@@ -94,124 +94,43 @@ case $key in
     #Ajout du css
     echo "* {box-sizing: border-box;}
 
-        .slider {
-        width: 300px;
-        text-align: center;
-        overflow: hidden;
-        }
+    .author-info {
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 0.75rem;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    }
+    .author-info a {
+    color: white;
+    }
 
-        #slide {
-        margin: 0 auto;
-        align-items: center;
-        justify-content: center;
-        font-family: 'Ropa Sans', sans-serif;
-        }
+    html, body {
+    overflow: auto;
+    align-items: center;
+    }
 
-        .slides {
-        display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        scroll-behavior: smooth;
-        -webkit-overflow-scrolling: touch;
-        
-        }
-        .slides::-webkit-scrollbar {
-        width: 10px;
-        height: 10px;
-        }
-        .slides::-webkit-scrollbar-thumb {
-        background: black;
-        border-radius: 10px;
-        }
-        .slides::-webkit-scrollbar-track {
-        background: transparent;
-        }
-        .slides > div {
-        scroll-snap-align: start;
-        flex-shrink: 0;
-        width: 300px;
-        height: 300px;
-        margin-right: 50px;
-        border-radius: 10px;
-        background: #eee;
-        transform-origin: center center;
-        transform: scale(1);
-        transition: transform 0.5s;
-        position: relative;
-        
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 100px;
-        }
-        .slides > div:target {
-        /*   transform: scale(0.8); */
-        }
-        .author-info {
-        background: rgba(0, 0, 0, 0.75);
-        color: white;
-        padding: 0.75rem;
-        text-align: center;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        margin: 0;
-        }
-        .author-info a {
-        color: white;
-        }
-        img {
-        object-fit: cover;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        }
-
-        .slider > a {
-        display: inline-flex;
-        width: 1.5rem;
-        height: 1.5rem;
-        background: white;
-        text-decoration: none;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        margin: 0 0 0.5rem 0;
-        position: relative;
-        }
-        .slider > a:active {
-        top: 1px;
-        }
-        .slider > a:focus {
-        background: #000;
-        }
-
-        /* Don't need button navigation */
-        @supports (scroll-snap-type) {
-        .slider > a {
-        display: none;
-        }
-        }
-
-        html, body {
-        height: 100%;
-        overflow: hidden;
-        }
-
-        .navbar, input, button, #form {
-        text-align: left;  
-        }
-
-        .div > .article{
-        margin-top: 20rem;
-        }
-        #commentaire{
-        border: 2px solid;
-        width:50%;
-        }" > css/style.css
+    .column {
+    float: left;
+    width: 25%;
+    padding: 5px;
+    }
+    #img{height:400px;overflow:auto}
+    /* Clearfix (clear floats) */
+    .row::after {
+    content: "";
+    clear: both;
+    display: table;
+    }
+    .crop {
+    width: 350px;
+    height: 350px;
+    object-fit: cover;
+    }" > css/style.css
     #Ajout du html
     echo "<!DOCTYPE html>
         <html lang='fr'>
@@ -223,14 +142,10 @@ case $key in
         <link href='css/style.css' rel='stylesheet'>
         </head>
         <body>
-        <div class='slider' id='slide' align='center'  style='margin-top: 35px;'>
-        
-        
-        <div class='slides'>
-        
-        
-        </div>
-        </div>
+          <div class='row' id='img'>
+            
+
+          </div>
 
         <div class='article' align='center'>
         
@@ -244,25 +159,20 @@ case $key in
         
         </p>
         </div>
+        <h5 i='createur'></5>
         </body>
-        </html>" > index.html
+        </html>
+" > index.html
 
     cd ..
     cd images/
-    i=1
-    l1=13
-    l2=17
-    for ls in *;do
-        sed -i "$l1 i\<a href='#slide-$i'>$i</a>" ../www/index.html
-        sed -i "$l2 i\<div id='slide-$i'><img src='../images/$ls' alt='$ls' width='300' height='400'></div>" ../www/index.html
-        let "i+=1"
-        let "l1+=1"
-        let "l2+=2"
+    for ls in *;do  
+        sed -i "/<div class='row' id='img'>/ a\ <div class='column'><img class='crop' src='../images/$ls' alt='$2' style='width:100%'></div>" ../www/index.html
     done
     cd ..
     
     #Creation d'un fichier csv contenant des articles
-    echo "Les personnalités nées un 11 janvier,Aja Naomi King : née le 11 janvier 1985. Connue pour avoir joué dans la série Murder <br> Yannick Andrei. DevOps Engineer chez GoodBarber. <br> Diego El Glaoui : compagnon de Iris Mittenaere
+    echo "Les personnalités nées un 11 janvier,Aja Naomi King : née le 11 janvier 1985. Connue pour avoir joué dans la série Murder <br> Yannick Andreï. DevOps Engineer chez GoodBarber. <br> Diego El Glaoui : compagnon de Iris Mittenaere
 Pourquoi je suis toujours fatigué, Le manque de sommeil est souvent une cause de fatigue. Ce type de fatigue est normal et disparaît avec du repos." > donnees/Articles.csv
     
     #Affichage des article dans la page web
@@ -291,6 +201,7 @@ Merci j'ai appris quelque chose." > donnees/Commentaires.csv
     # Générer compte Utilisateur
     echo "clement,monMDP
 Hugo,1997pass" > donnees/User.csv
+    firefox ./www/index.html
     shift # past argument
     shift # past value
     ;;
@@ -311,7 +222,16 @@ Hugo,1997pass" > donnees/User.csv
 
 
     add_image)
-    LIBPATH="$2"
+    cd images/
+    if [ -e $2 ]
+    then
+        sed -i "/<div class='row' id='img'>/ a\ <div class='column'><img src='../images/$2' alt='$2' style='width:100%'></div>" ../www/index.html
+    else
+        echo "L'image $2 n'est pas disponible dans le répertoire \"images\". Veuillez l'ajouter et réésayer."
+        cd ..
+        exit 0
+    fi
+    cd ..
     shift # past argument
     shift # past value
     ;;
@@ -361,7 +281,6 @@ Hugo,1997pass" > donnees/User.csv
     do
         if [ "$user" = "$2" ] && [ "$pass" = "$3" ];then
             echo "Vous êtes authentifié avec le compte $2"
-            exit 0
         fi
     done < $FILE
     IFS=$OLDIFS
