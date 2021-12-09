@@ -54,19 +54,32 @@ case $key in
 
     add_user <Nom d'utilisateur> <Mot de passe> -> Génére un compte d'authentification
     "
-    shift # past argument
-    shift # past value
+    shift 
+    shift 
     ;;
     build|--build)
+    #Verification de l'existance du dossier donnees sinon il le creer
+    if [ -d "donnees/" ];then
+	    2>/dev/null
+    else
+	    mkdir donnees > /dev/null
+    fi
+    # Fichier qui contient les différentes étapes du script
+    touch donnees/messages.csv
+    LOG=donnees/messages.csv
+
     #Vérification existance du dossier www
     if [ -d "www/" ];then
             read -r -p "Voulez-vous supprimer le répertoire \"www\" existant ? [oui/non] " response
 
             case "$response" in [yY][eE][sS]|[yY]|[oO]|[oO][uU][iI]) 
                     rm -R www/
+                    echo "$(date +%c) : Suppression du répertoire \"www\"" >> $LOG
+                    echo "$(date +%c) : Création du nouveau site web" >> $LOG
                     ;;
             *)
                     echo "Le fichier n'a pas eté supprimé et pose conflit avec les commandes du programme. Veuillez le supprimer pour executer ce script"
+                    echo "$(date +%c) : ⚠⚠⚠ Conflit ⚠⚠⚠ : dossier www existant" >> $LOG
                     exit 0
                     ;;
             esac
@@ -77,20 +90,17 @@ case $key in
         cd $2
         if [ $? -ne 0 ];then
                 echo "Impossible d'acceder à ${2}"
+                echo "$(date +%c) : ⚠⚠⚠ Impossible d'acceder à ${2} ⚠⚠⚠ " >> $LOG
                 exit 0
         fi
     fi
-    #Verification de l'existance du dossier donnees sinon il le creer
-    if [ -d "donnees/" ];then
-	    2>/dev/null
-    else
-	    mkdir donnees > /dev/null
-    fi
+    
     #création répertoire www
     mkdir www > /dev/null
-    logger -s 'création du répertoire www' > donnees/logs.log
+    echo "$(date +%c) : Création du répertoire www" >> $LOG
     cd www
     mkdir css > /dev/null
+    echo "$(date +%c) : Création du répertoire css dans www" >> ../$LOG
     #Ajout du css
     echo "* {box-sizing: border-box;}
 
@@ -131,6 +141,7 @@ case $key in
     height: 350px;
     object-fit: cover;
     }" > css/style.css
+    echo "$(date +%c) : Ajout du code css dans le fichier \"style.css\" " >> ../$LOG
     #Ajout du html
     echo "<!DOCTYPE html>
         <html lang='fr'>
@@ -163,18 +174,19 @@ case $key in
         </body>
         </html>
 " > index.html
-
+    echo "$(date +%c) : Ajout du code html dans le fichier \"index.html\"" >> ../$LOG
     cd ..
     cd images/
     for ls in *;do  
-        sed -i "/<div class='row' id='img'>/ a\ <div class='column'><img class='crop' src='../images/$ls' alt='$2' style='width:100%'></div>" ../www/index.html
+        sed -i "/<div class='row' id='img'>/ a\ <div class='column'><img class='crop' src='../images/$ls' alt='$ls' style='width:100%'></div>" ../www/index.html
+        echo "$(date +%c) : Ajout de l'image \"$ls\" dans la page index.html" >> ../$LOG
     done
     cd ..
     
     #Creation d'un fichier csv contenant des articles
     echo "Les personnalités nées un 11 janvier,Aja Naomi King : née le 11 janvier 1985. Connue pour avoir joué dans la série Murder <br> Yannick Andreï. DevOps Engineer chez GoodBarber. <br> Diego El Glaoui : compagnon de Iris Mittenaere
 Pourquoi je suis toujours fatigué, Le manque de sommeil est souvent une cause de fatigue. Ce type de fatigue est normal et disparaît avec du repos." > donnees/Articles.csv
-    
+    echo "$(date +%c) : Création du fichier Articles.csv dans le répertoire donnees, contenant les articles " >> $LOG
     #Affichage des article dans la page web
     FILE=donnees/Articles.csv
     OLDIFS=$IFS
@@ -183,6 +195,7 @@ Pourquoi je suis toujours fatigué, Le manque de sommeil est souvent une cause d
     while read titre description
     do
         sed -i "/<div class='article' align='center'>/ a\<h2>$titre</h2> $description" www/index.html
+        echo "$(date +%c) : Ajout dans la page index.html les articles stocker dans \"Articles.csv\"" >> $LOG
     done < $FILE
     IFS=$OLDIFS
 
@@ -190,34 +203,57 @@ Pourquoi je suis toujours fatigué, Le manque de sommeil est souvent une cause d
     echo "Cool :)
 Génial !!!
 Merci j'ai appris quelque chose." > donnees/Commentaires.csv
-    
+    echo "$(date +%c) : Création du fichier Commentaires.csv dans le répertoire donnees, contenant les commentaires " >> $LOG
     # Affichage des commentaires dans la page web
     FILE=donnees/Commentaires.csv
     [ ! -f $FILE ] && { echo "$FILE file not found"; exit 99; }
     while read commentaire
     do
         sed -i "/<p id='commentaire'>/ a\ $commentaire<br>" www/index.html
+        echo "$(date +%c) : Ajout dans la page index.html les commentaires stocker dans \"Commentaires.csv\"" >> $LOG
     done < $FILE
     # Générer compte Utilisateur
     echo "clement,monMDP
 Hugo,1997pass" > donnees/User.csv
+    echo "$(date +%c) : Création du fichier User.csv dans le répertoire donnees, contenant les comptes utilisateurs " >> $LOG
     firefox ./www/index.html
-    shift # past argument
-    shift # past value
+    echo "$(date +%c) : Ouverture de la page index.html dans le navigateur firefox" >> $LOG
+    shift 
+    shift 
     ;;
 
 
     -d|--debug)
-    LIBPATH="$2"
-    shift # past argument
-    shift # past value
+    # Affichage du fichier contenant les étapes du script
+    cat donnees/messages.csv
+    shift 
+    shift 
     ;;
 
 
     --stats|generate_stats)
-    LIBPATH="$2"
-    shift # past argument
-    shift # past value
+    # Affichage nombre d'utilisateur dans la base
+    nbuser=$(wc -l donnees/User.csv)
+    nbuser=$(echo $nbuser | sed 's/donnees\/User.csv//')
+    echo "Il y a ${nbuser}utilisateurs enregistrés dans la base"
+    # Affichage nombre d'article
+    nbarticle=$(wc -l donnees/Articles.csv)
+    nbarticle=$(echo $nbarticle | sed 's/donnees\/Articles.csv//')
+    echo "Il y a ${nbarticle}articles enregistrés dans la base"
+    # Affichage nombre de commentaire
+    nbcomment=$(wc -l donnees/Commentaires.csv)
+    nbcomment=$(echo $nbcomment | sed 's/donnees\/Commentaires.csv//')
+    echo "Il y a ${nbcomment}commentaires enregistrés dans la base"
+    # Affichage nombre d'image
+    nbimage=0
+    cd images/
+    for ls in *;do  
+        let "nbimage++"
+    done
+    cd ..
+    echo "Il y a ${nbimage} images dans le répertoire \"images\""
+    shift 
+    shift 
     ;;
 
 
@@ -232,8 +268,8 @@ Hugo,1997pass" > donnees/User.csv
         exit 0
     fi
     cd ..
-    shift # past argument
-    shift # past value
+    shift 
+    shift 
     ;;
 
 
@@ -244,8 +280,8 @@ Hugo,1997pass" > donnees/User.csv
         sed -i "1i\ $var
 " donnees/Articles.csv
     done
-    shift # past argument
-    shift # past value
+    shift 
+    shift 
     ;;
 
 
@@ -266,8 +302,8 @@ Hugo,1997pass" > donnees/User.csv
     sed -i "1i\\$2,$3
 " donnees/User.csv
     exit 1
-    shift # past argument
-    shift # past value
+    shift 
+    shift 
     ;;
 
 
@@ -286,8 +322,8 @@ Hugo,1997pass" > donnees/User.csv
     IFS=$OLDIFS
     echo "Erreur d'authentification !"
     exit 0
-    shift # past argument
-    shift # past value
+    shift 
+    shift 
     ;;
 
 
@@ -298,20 +334,20 @@ Hugo,1997pass" > donnees/User.csv
         sed -i "1i\ $var <br>" donnees/Commentaires.csv
         sed -i "/<p id='commentaire'>/ a\ $var<br>" www/index.html  
     done
-    shift # past value
+    shift 
     ;;
 
 
     ?)
     echo "Le parametre ${2} n'existe pas"
-    shift # past argument
-    shift # past value
+    shift 
+    shift 
     ;;
 
 
     --default)
     DEFAULT=YES
-    shift # past argument
+    shift 
     ;;
 
 esac
