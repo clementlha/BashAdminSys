@@ -30,6 +30,9 @@ case $key in
     -h|--help)
     echo " **** Script Administration Systeme et Réseaux **** 
     
+    [Auteurs]
+    Clément L'HARIDON et Hugo RAGIOT
+
     [Description]
     Ce script permet de générer un site vitrine contenant un carousel, des articles et des commentaires.
     
@@ -52,7 +55,7 @@ case $key in
 
     -auth <Nom d'utilisateur> <Mot de passe> -> Permet de s'authentifier et d'afficher le nom dans la page web
 
-    add_user <Nom d'utilisateur> <Mot de passe> -> Génére un compte d'authentification
+    add_user <Nom d'utilisateur> <Mot de passe> -> Permet de générer un compte d'authentification
     "
     shift 
     shift 
@@ -67,7 +70,10 @@ case $key in
     # Fichier qui contient les différentes étapes du script
     touch donnees/messages.csv
     LOG=donnees/messages.csv
-
+    if [ $2 = "-h" | $2 = "--help" | $2 = "--build" | $2 = "build" | $2 = "--debug" | $2 = "-d" | $2 = "--stats" | $2 = "generate_stats" | $2 = "add_images" | $2 = "add_articles" | $2 = "add_comment" | $2 = "-auth" | $2 = "add_user" |];then
+        echo "Vous ne pouvez pas mettre une deuxieme option apres \"build\" !"
+        exit 0
+    fi
     #Vérification existance du dossier www
     if [ -d "www/" ];then
             read -r -p "Voulez-vous supprimer le répertoire \"www\" existant ? [oui/non] " response
@@ -83,16 +89,6 @@ case $key in
                     exit 0
                     ;;
             esac
-    fi
-    if [ -z "$2" ];then
-	    echo "Le site est généré dans le dossier www du répertoire courant"
-    else
-        cd $2
-        if [ $? -ne 0 ];then
-                echo "Impossible d'acceder à ${2}"
-                echo "$(date +%c) : ⚠⚠⚠ Impossible d'acceder à ${2} ⚠⚠⚠ " >> $LOG
-                exit 0
-        fi
     fi
     
     #création répertoire www
@@ -216,8 +212,25 @@ Merci j'ai appris quelque chose." > donnees/Commentaires.csv
     echo "clement,monMDP
 Hugo,1997pass" > donnees/User.csv
     echo "$(date +%c) : Création du fichier User.csv dans le répertoire donnees, contenant les comptes utilisateurs " >> $LOG
-    firefox ./www/index.html
-    echo "$(date +%c) : Ouverture de la page index.html dans le navigateur firefox" >> $LOG
+    
+
+    #Vérification parametre build <répertoire>
+    if [ -z "$2" ];then
+	    echo "Le site est généré dans le répertoire www du répertoire courant"
+        firefox ./www/index.html
+        echo "$(date +%c) : Ouverture de la page index.html dans le navigateur firefox" >> $LOG
+    else
+        (cp -r www/ echo $2 | sed 's/\.\///' | tr -d '\n') 2> /dev/null
+        (cp -r images/ echo $2 | sed 's/\.\///' | tr -d '\n') 2> /dev/null
+        (cp -r donnees/ echo $2 | sed 's/\.\///' | tr -d '\n') 2> /dev/null
+        rm -R www/ 2> /dev/null
+        rm -R donnees/ 2> /dev/null
+        if [ $? -ne 0 ];then
+                echo "Impossible d'acceder à ${2}"
+                exit 0
+        fi
+        firefox $2www/index.html
+    fi
     shift 
     shift 
     ;;
