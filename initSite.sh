@@ -70,10 +70,7 @@ case $key in
     # Fichier qui contient les différentes étapes du script
     touch donnees/messages.csv
     LOG=donnees/messages.csv
-    if [ $2 = "-h" | $2 = "--help" | $2 = "--build" | $2 = "build" | $2 = "--debug" | $2 = "-d" | $2 = "--stats" | $2 = "generate_stats" | $2 = "add_images" | $2 = "add_articles" | $2 = "add_comment" | $2 = "-auth" | $2 = "add_user" |];then
-        echo "Vous ne pouvez pas mettre une deuxieme option apres \"build\" !"
-        exit 0
-    fi
+    
     #Vérification existance du dossier www
     if [ -d "www/" ];then
             read -r -p "Voulez-vous supprimer le répertoire \"www\" existant ? [oui/non] " response
